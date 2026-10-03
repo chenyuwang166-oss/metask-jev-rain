@@ -1,0 +1,180 @@
+{
+  "entry": "metask-jev-rain",
+  "author_org": "MeTask-Rain (same org as metask-jev-4b: Wayfind / metask-ai)",
+  "model": "google/gemma-4-12B-it",
+  "revision": "707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7",
+  "revision_note": "HF commit hash read from the huggingface_hub cache metadata (.cache/huggingface/download/config.json.metadata, first line) of the local copy ~/jev/models/gemma-4-12b-it; the safetensors were fetched from ModelScope google/gemma-4-12b-it @ master (same release). The adapter verifies a LOCAL model dir against config_sha256 (and model_safetensors_bytes when a single model.safetensors is present) at load time and records revision_verified in raw.runtime (METASK_RAIN_STRICT_REVISION=1 makes a mismatch fatal); an HF id is loaded with revision= directly. Validator: huggingface-cli download google/gemma-4-12B-it --revision 707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7 config.json, then sha256sum it.",
+  "config_sha256": "478c46e8d2c52d5c2d85bf67e3b3e8c90e7c9d91086cee27e3c267907e936bd9",
+  "config_bytes": 4423,
+  "model_safetensors_bytes": 23919549408,
+  "frozen_weights": true,
+  "training": "none (no fine-tune, no LoRA, no soft prompt, no per-item prompt tuning)",
+  "prompt_version": "verbalized-one-word-v1 (cache_verbalized.py, 2026-10-02)",
+  "prompt_system_text": "You are a careful, decisive judge. Read the context, apply every rule, definition, threshold, exception and date it contains, and answer the question. Reply with exactly one word and nothing else.",
+  "prompt_system_turn": false,
+  "prompt_enable_thinking": false,
+  "readout": "per label: logsumexp of the last-position logits over the label's single-token surface forms; one forward pass, logits_to_keep=1",
+  "attn_implementation": "sdpa",
+  "forms": {
+    "single_token_only": true,
+    "single_token_rule": "a form is used only if tokenizer.encode(form, add_special_tokens=False) is exactly one token (Gemma 4 tokenizer: 'A.', '(A', ' 0', '0.' are multi-token and drop out)",
+    "choice_letter_templates": [
+      "{C}",
+      " {C}",
+      "{c}",
+      " {c}",
+      "{C}.",
+      "({C}"
+    ],
+    "choice_effective_gemma4": [
+      "{C}",
+      " {C}",
+      "{c}",
+      " {c}"
+    ],
+    "score_digit_templates": [
+      "{d}",
+      " {d}",
+      "{d}."
+    ],
+    "score_effective_gemma4": [
+      "{d}"
+    ],
+    "noul": {
+      "yes": [
+        "yes",
+        " yes"
+      ],
+      "no": [
+        "no",
+        " no"
+      ]
+    },
+    "noul_form_set_name": "lower",
+    "noul_form_note": "calib_gemma_report.md 3.2: the 'lower' set gives the same sign of d = lse(yes) - lse(no) as the full 12+12 set on all 74 public noul items (0 flips; min |d| 0.25). The full sets are kept below for the record and for the parity check.",
+    "noul_full_yes": [
+      "yes",
+      "Yes",
+      "YES",
+      " yes",
+      " Yes",
+      " YES",
+      "true",
+      "True",
+      " true",
+      " True",
+      "Y",
+      " Y"
+    ],
+    "noul_full_no": [
+      "no",
+      "No",
+      "NO",
+      " no",
+      " No",
+      " NO",
+      "false",
+      "False",
+      " false",
+      " False",
+      "N",
+      " N"
+    ]
+  },
+  "precision_policy": "Precision is chosen at load time from the free VRAM of the CUDA device: bf16 when >= 27 GiB are free, otherwise bitsandbytes LLM.int8; env METASK_RAIN_DTYPE=bf16|int8 overrides; nf4/4-bit is refused. Each precision has its own calibration block below, fitted on logits of that precision; the adapter uses the block matching the precision it actually loaded and records both in raw.runtime. The bf16 block was fitted on a CPU-offload run that is numerically bf16 (peak VRAM 19.7 GB on an RTX 4090); bf16 on a single GPU (no offload) has not been run on our hardware. At their own fitted values int8 and bf16 agree on 225/231 public decisions (choice 135/139, noul 72/74, score 18/18).",
+  "precision_auto_threshold_gib": 27,
+  "precision_blocks": [
+    "bf16",
+    "int8"
+  ],
+  "bf16": {
+    "temperature_by_kind": {
+      "choice": 4.5,
+      "noul": "one_bin",
+      "score": 5.0
+    },
+    "noul_calibration": {
+      "method": "one_bin_histogram",
+      "forms": {
+        "yes": [
+          "yes",
+          " yes"
+        ],
+        "no": [
+          "no",
+          " no"
+        ]
+      },
+      "decision": "yes iff d = logsumexp(yes forms) - logsumexp(no forms) > 0",
+      "p_cal": 0.8649,
+      "fitted_on": "dev half (116 items) of split_231_v2",
+      "reported": "P(yes)=p_cal if d>0 else 1-p_cal",
+      "reference": "Zadrozny & Elkan 2001 (histogram binning), one bin per decision side"
+    },
+    "noul_alternative": {
+      "method": "temperature",
+      "T": 0.05,
+      "note": "not used by the adapter; kept for comparison"
+    },
+    "fitted_on_cache": "logits_231_verb_gemma12b_bf16off.jsonl",
+    "fitted_on_cache_sha256": "4a1811e264dd5220119692f050e622ccc44fa2c58c59c8f0a7231d7db7948a21",
+    "selection_rule": "dev-only; maximise harmonic(I_type, C_type); choice grid 0.5..6 step 0.25; score grid {1,1.5,2,2.3,3,4,5,6,8}; ties -> first ascending",
+    "notes": "Fit on dev 116 of split_231_v2 only; check half (115) scored once at these values: I_231 71.1, C_axis 82.0, noul abstention 0%. Full 231 for reference: I_231 68.4, C_axis 87.3. Local reconstruction of METHOD v1.5 on the 231 public items; estimates, not official. noul form-set check: sign(lower) == sign(full 12+12) on 74/74 items. Logits from a CPU-offload run that is numerically bf16 (peak VRAM 19.7 GB)."
+  },
+  "int8": {
+    "temperature_by_kind": {
+      "choice": 4.5,
+      "noul": "one_bin",
+      "score": 5.0
+    },
+    "noul_calibration": {
+      "method": "one_bin_histogram",
+      "forms": {
+        "yes": [
+          "yes",
+          " yes"
+        ],
+        "no": [
+          "no",
+          " no"
+        ]
+      },
+      "decision": "yes iff d = logsumexp(yes forms) - logsumexp(no forms) > 0",
+      "p_cal": 0.8919,
+      "fitted_on": "dev half (116 items) of split_231_v2",
+      "reported": "P(yes)=p_cal if d>0 else 1-p_cal",
+      "reference": "Zadrozny & Elkan 2001 (histogram binning), one bin per decision side"
+    },
+    "noul_alternative": {
+      "method": "temperature",
+      "T": 0.05,
+      "note": "not used by the adapter; kept for comparison"
+    },
+    "fitted_on_cache": "logits_231_verb_gemma12b_int8.jsonl",
+    "fitted_on_cache_sha256": "77df7e47831220595ef2d4fc5731afb30c0735b9e134de96d985ff2929f0096e",
+    "selection_rule": "dev-only; maximise harmonic(I_type, C_type); choice grid 0.5..6 step 0.25; score grid {1,1.5,2,2.3,3,4,5,6,8}; ties -> first ascending",
+    "notes": "Fit on dev 116 of split_231_v2 only; check half (115) scored once at these values: I_231 72.0, C_axis 80.6, noul abstention 0%. Full 231 for reference: I_231 69.6, C_axis 87.2. Local reconstruction of METHOD v1.5 on the 231 public items; estimates, not official. noul form-set check: sign(lower) == sign(full 12+12) on 74/74 items. Score T 5.0 is the pre-registered dev pick; the check half was looked at once (calib_gemma, 2026-10-02) and preferred 4.0; the dev pick was kept."
+  },
+  "noul_mapping_note": "noul uses one-bin histogram calibration (Zadrozny & Elkan 2001, histogram binning with a single bin per decision side): the decision is the sign of d = logsumexp(yes forms) - logsumexp(no forms) of the frozen model (d == 0 -> no), and the reported probability is the precision of that sign rule on the dev half: P(yes) = p_cal if d > 0 else 1 - p_cal. It is a non-decreasing step function of d, not a temperature: every noul item gets one of two values, and the magnitude of d is not used. It was chosen so that no item falls in the 0.2-0.8 abstention band and the reported confidence equals the calibration-set precision. It replaces the near-argmax temperature T 0.05 of the previous revision, which is kept per block as noul_alternative (selectable with METASK_RAIN_NOUL=temperature) for comparison; at T 0.05 the decisions are identical and P(yes) is >= 0.993 or <= 0.007 on every public item.",
+  "score_temperature_note": "T_score 5.0 is the pre-registered dev pick on both precisions (calib_v2.py, grid {1,1.5,2,2.3,3,4,5,6,8}). On int8 the 115-item check half was looked at once before this fit (calib_gemma, 2026-10-02) and preferred T 4.0 (check-half score I/C 81.4/86.3 at 4.0 vs 78.0/82.4 at 5.0); the previous revision of this file had shipped 4.0 for that reason. This revision keeps the pre-registered dev pick 5.0 and does not re-pick on the check half. No argmax decision differs between 4.0 and 5.0 on any of the 18 public score items; the expected position and RPS do.",
+  "fitted_on": "dev half (116 items) of the 231 public items, split_231_v2.json (units = paraphrase groups; 0 groups straddle halves)",
+  "fitting_objective": "per type, maximise the harmonic mean H(I_type, C_type) on dev under our local reconstruction of the METHOD v1.5 scorer; the held-out public check half (115) was scored once per precision at the picked values",
+  "method": "choice and score: temperature on the per-label log-mass (argmax unchanged); noul: one-bin histogram calibration of sign(d)",
+  "max_input_tokens": 65536,
+  "max_input_tokens_note": "prompts longer than 65536 tokens are refused with status 422 on both precisions; the longest public item is 3,942 tokens. selftest.sh LONG-INPUT SMOKE (int8, RTX 4090 24 GB, 2026-10-03): 18,504 tokens ok (peak 16.2 GiB allocated / 17.4 reserved, 8.7 s); 33,056 tokens ok (20.4 / 22.3 GiB, 20.7 s). Prompts between ~33k and 65536 tokens were not tried on the 24 GB card and may run out of memory there in int8; an OOM is an ordinary failed item (ok=false, no status), not a 422. bf16 on a >= 27 GiB card has not been run at any length by us.",
+  "min_transformers": "5.10.0 (first tag containing src/transformers/models/gemma4_unified; v5.9.x does not have it; 5.10.0 and 5.10.1 were both published on PyPI on 2026-06-03; tested: 5.17.0 only)",
+  "readout_no_single_token_form": "a label none of whose surface forms is a single token gets log-mass -1e9 (P = 0), as in cache_verbalized.py; no public item is affected (max 5 score levels / 6 choice options)",
+  "choice_max_options": 26,
+  "choice_max_options_note": "one option letter A..Z per option; a choice item with more than 26 options is refused by render() with an explicit ValueError (an ordinary failed item, not a 422) instead of being silently truncated; the caches never saw more than 6 options",
+  "probs_source": {
+    "choice": "native",
+    "score": "native",
+    "noul_one_bin": "native_decision_one_bin_calibrated",
+    "noul_temperature": "native",
+    "note": "per-item DecisionResult.probs_source: native where the reported distribution is the tempered softmax of the model's own log-mass; the noul one-bin mapping reports the calibration constant p_cal, so it is labelled distinctly and summary.json probability_sources lists both values"
+  },
+  "nf4_note": "nf4 is refused: on the 231 public items at the then-current temperatures (choice 1.9 / noul 0.05 / score 4.0) local I_231 was 58.2 for nf4 vs 70.0 for int8 (verb_gemma12b_nf4_scores_v2.json / verb_gemma12b_int8_scores_v2.json, full@picked)",
+  "prior_work": "Same read-out family as NInfer -> Cygnet (single forward pass, probability mass of label tokens at the answer position, temperature); Cygnet pins the same HF revision. Differences: one-word verbalized prompt with surface-form log-mass, per-type temperatures, in-process transformers, one-bin noul calibration. No Cygnet code or calibration was used.",
+  "estimates_note": "All per-block numbers are local reconstructions of METHOD v1.5 on the 231 public items; estimates, not official scores. No Speed, Cost or composite estimate is given.",
+  "date": "2026-10-03"
+}

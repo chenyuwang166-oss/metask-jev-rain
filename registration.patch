@@ -1,0 +1,54 @@
+--- a/jevbench/adapters/__init__.py
++++ b/jevbench/adapters/__init__.py
+@@ -34,6 +34,8 @@
+ from .classifier_dev import ClassifierDevAdapter  # noqa: F401
+ from .certo_local import CertoLocalAdapter  # noqa: F401
+ from .smalljev_local import SmallJevLocalAdapter  # noqa: F401
++# metask-jev-rain (MeTask): frozen google/gemma-4-12B-it, verbalized one-word prompt, log-mass read-out
++from .metask_rain import MetaskRainAdapter  # noqa: F401
+ 
+ 
+ def NeedleLocalAdapter(**kw):  # lazy: only the Needle venv can import needle
+--- a/jevbench/cli.py
++++ b/jevbench/cli.py
+@@ -25,7 +25,8 @@
+                        RemoteInprocAdapter, SemIfDirectAdapter, SgSystemOneAdapter, So1DeciderAdapter,
+                        TypeSafeAdapter, DjevAdapter,
+                        LayaLocalAdapter, Gliner2LocalAdapter, VerdictLocalAdapter, PawLocalAdapter,
+-                       ClassifierDevAdapter, CertoLocalAdapter, QwenFlashLinearAdapter)
++                       ClassifierDevAdapter, CertoLocalAdapter, QwenFlashLinearAdapter,
++                       MetaskRainAdapter)
+ from .budget import Ledger
+ from .runner import DEFAULT_RESERVE_USD, Runner
+ from .summarize import public_export, summarize
+@@ -65,8 +66,9 @@
+              "laya_local": LayaLocalAdapter, "gliner2_local": Gliner2LocalAdapter,
+              "verdict_local": VerdictLocalAdapter, "paw_local": PawLocalAdapter,
+              "classifier_dev": ClassifierDevAdapter, "certo_local": CertoLocalAdapter,
+-             "qwen_flash_linear": QwenFlashLinearAdapter}
+-    if args.adapter not in ("typesafe", "djev", "needle_local", "semif_direct", "so1_decider", "sg_system_one", "classifier_dev") and not args.endpoint:
++             "qwen_flash_linear": QwenFlashLinearAdapter,
++             "metask_rain": MetaskRainAdapter}
++    if args.adapter not in ("typesafe", "djev", "needle_local", "semif_direct", "so1_decider", "sg_system_one", "classifier_dev", "metask_rain") and not args.endpoint:
+         print(f"--endpoint required for {args.adapter}", file=sys.stderr)
+         return 2
+     kwargs = dict(endpoint=args.endpoint, model=args.model,
+@@ -76,7 +78,8 @@
+     if args.adapter == "openai_compat":
+         kwargs["model"] = args.model or ""
+     if args.adapter in ("local_openjev", "semif_direct", "so1_decider", "sg_system_one",
+-                        "laya_local", "gliner2_local", "verdict_local", "paw_local", "certo_local"):
++                        "laya_local", "gliner2_local", "verdict_local", "paw_local", "certo_local",
++                        "metask_rain"):
+         kwargs["revision"] = args.revision
+     adapter = kinds[args.adapter](**kwargs)
+     if args.cost_basis:
+@@ -166,7 +169,7 @@
+                                 "semif_direct", "so1_decider", "remote_inproc",
+                                 "sg_system_one", "djev", "laya_local", "gliner2_local",
+                                 "verdict_local", "paw_local", "classifier_dev", "certo_local",
+-                                "qwen_flash_linear"])
++                                "qwen_flash_linear", "metask_rain"])
+     p_run.add_argument("--endpoint", default=None)
+     p_run.add_argument("--model", default=None)
+     p_run.add_argument("--key-env", dest="key_env",

@@ -1,0 +1,26 @@
+# metask-jev-rain: exact versions in the venv the calibration caches and the harness self-test ran with
+# (read with `pip freeze` on the test box, 2026-10-03). Python 3.10.12, Ubuntu 22.04.5, Linux 6.8.
+# Hardware tested: one NVIDIA GeForce RTX 4090 (24 GB, sm_89), driver 580.105.08 (CUDA 13.0 runtime).
+# torch 2.14.1 is the CUDA 13.0 build (torch.__version__ == "2.14.1+cu130"); install it from the PyTorch
+# index, e.g.  pip install torch==2.14.1 --index-url https://download.pytorch.org/whl/cu130
+# A CUDA 13.0 build needs an NVIDIA driver >= 580. No other torch/CUDA combination has been run.
+# Plus the JevBench harness itself (its own pyproject; pure Python).
+torch==2.14.1
+transformers==5.17.0        # adapter refuses releases without model_type gemma4_unified (first tag with models/gemma4_unified: 5.10.0); only 5.17.0 tested
+tokenizers==0.23.2
+safetensors==0.8.0
+huggingface_hub==1.33.0
+accelerate==1.15.0          # device_map={"": cuda_index} loading
+bitsandbytes==0.50.2        # int8 path (LLM.int8); not imported on the bf16 path
+numpy==2.2.6
+Jinja2==3.1.6               # chat template rendering
+sentencepiece==0.2.2
+regex==2026.9.29
+PyYAML==6.0.3
+packaging==26.3
+tqdm==4.70.1
+filelock==4.0.8
+psutil==7.2.2
+triton==3.8.0               # pulled in by torch 2.14.1 on Linux
+# peft is installed in the tested venv (0.21.0) but neither imported nor needed (no adapters / LoRA). Nothing is downloaded at run time when --endpoint (or
+# METASK_RAIN_MODEL_PATH) points to a local model dir; see README "Environment and offline use".
