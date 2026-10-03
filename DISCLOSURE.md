@@ -4,7 +4,7 @@ Itemised disclosure for the entry **metask-jev-rain**, written against `docs/MET
 
 **Every number in this file is an estimate from our local reconstruction of the v1.5 scorer on the 231 public items. None is an official score. We make no statement about Speed, Cost, the composite or rank.**
 
-Mechanical values (self-test numbers, hashes) were filled from the frozen-package run of 2026-10-03 (freeze run `out/20261003_freeze_203822`, 12:38 UTC, kept under `validate/20261003_203822_freeze/`; the 12:02 UTC run `out/20261003_200208` is kept under `validate/20261003_200208_frozen/`); the package commit hash is filled when the repository is published.
+Mechanical values (self-test numbers, hashes) were filled from the frozen-package run of 2026-10-03 (freeze run `out/20261003_freeze_203822`, 12:38 UTC, kept under `validate/20261003_203822_freeze/`; the 12:02 UTC run `out/20261003_200208` is kept under `validate/20261003_200208_frozen/`); package commit `af3169c2eb8f0af2bb83db9a2bd077807dc16e9b` (tag `v1.0-frozen`).
 
 ---
 
@@ -63,7 +63,7 @@ Local estimates: 231 public items, our reconstruction of v1.5, equal type weight
 | Support signature | Pre-filled | Choice + Noul + Score, native probabilities (noul two-valued). |
 | Bootstrap 95 % interval, tie markers | Evaluator only | None. |
 | API flag | Pre-filled | No (in-process, offline). |
-| Adapter id | Pre-filled | `metask_rain` @ package commit `<filled when the repository is published>`; model `google/gemma-4-12B-it` @ `707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7`; `calibration.json` SHA-256 `4682cae4d181e53abcaf67bc7a9b48b4650be95eed7ef2ca79aff658cfe64aa4` (the file executed by the 2026-10-03 12:38 UTC freeze self-test, `raw.runtime.calibration_sha256`; the 12:02 UTC run executed `43f32dfa5767fb29176aea4a09a014f771bcfdebef2b5eb7357909f0ed252ca0`, identical in every numeric block); adapter `metask_rain.py` SHA-256 `b943989039858b8463b617b89d06fae2ec027e1cf012762fe4b1d1aef7682c65`; caches sha256 int8 `77df7e47831220595ef2d4fc5731afb30c0735b9e134de96d985ff2929f0096e`, bf16 `4a1811e264dd5220119692f050e622ccc44fa2c58c59c8f0a7231d7db7948a21`. |
+| Adapter id | Pre-filled | `metask_rain` @ package commit ``af3169c2eb8f0af2bb83db9a2bd077807dc16e9b` (tag `v1.0-frozen`; package commit)`; model `google/gemma-4-12B-it` @ `707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7`; `calibration.json` SHA-256 `4682cae4d181e53abcaf67bc7a9b48b4650be95eed7ef2ca79aff658cfe64aa4` (the file executed by the 2026-10-03 12:38 UTC freeze self-test, `raw.runtime.calibration_sha256`; the 12:02 UTC run executed `43f32dfa5767fb29176aea4a09a014f771bcfdebef2b5eb7357909f0ed252ca0`, identical in every numeric block); adapter `metask_rain.py` SHA-256 `b943989039858b8463b617b89d06fae2ec027e1cf012762fe4b1d1aef7682c65`; caches sha256 int8 `77df7e47831220595ef2d4fc5731afb30c0735b9e134de96d985ff2929f0096e`, bf16 `4a1811e264dd5220119692f050e622ccc44fa2c58c59c8f0a7231d7db7948a21`. |
 
 ## E. Integrity statements (METHOD §0, §1.3 item 5, §7)
 
