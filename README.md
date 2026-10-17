@@ -1,26 +1,27 @@
 # metask-jev-rain
 
-> **Status (2026-10-15):** This repository is our 2026-10-03 frozen-base package, kept for the record. Our current official JevBench results come from the trained models, measured and ranked by the benchmark organizers (not self-reported):
->
-> | Model | Trained | Leaderboard | Metric | Score | As of |
-> |---|---|---|---|---|---|
-> | metask-jev-rain-31B-trained (service v3) | yes | JevBench open-weight leaderboard v1.6.18 | Capability Score | 79.6 (#3 among open-weight systems) | 2026-10-14 |
-> | metask-jev-rain-12B-trained | yes | JevBench open-weight leaderboard v1.6.18 | Capability Score | 77.9 (highest among ranked entries labeled 12B in the system name) | 2026-10-14 |
->
-> Measured by the leaderboard operator (Benchmark Heaven) on 1,500 decision items per system (1,200 sealed + 300 public).
->
-> Leaderboard: https://benchmarkheaven.com/jev-models · Models: https://huggingface.co/MeTask-Rain/metask-jev-rain-31B-trained · https://huggingface.co/MeTask-Rain/metask-jev-rain-12B-trained. The numbers further below are local estimates for this 2026-10-03 package only.
->
-> 说明（2026-10-15）：本仓库是 2026-10-03 的冻结底座旧包，留作记录。现行官方成绩来自训练版模型（见上表，榜方实测，非自测）；下文数字仅为本旧包当时的本地估算。榜方 Benchmark Heaven 测量，每个系统 1,500 道决策题（1,200 封存 + 300 公开）。
+This is MeTask's early JevBench package, recorded on **2026-10-03** and retained for reproducibility. For our current trained decision models, official results and privately deployable weights, use the 31B and 12B links below. Results for those models do not describe this historical package.
 
-JevBench submission package: a **frozen** `google/gemma-4-12B-it` (HF revision `707f0a3b8a3c7ad586ed01e27eafbad8a27dd0f7`, no training of any kind) read out in one forward pass with a one-word prompt, per-label surface-form log-mass aggregation, and per-type calibration fitted on the dev half of the 231 public JevBench items. In-process adapter for the upstream `jevbench` harness.
+## Current trained models
 
-- **Long-form description, how to run, environment, precision policy, disclosure:** [`README-metask-rain.md`](README-metask-rain.md)
-- **Itemised disclosure against METHOD v1.5:** [`DISCLOSURE.md`](DISCLOSURE.md)
-- **Adapter:** [`jevbench/adapters/metask_rain.py`](jevbench/adapters/metask_rain.py) · **calibration:** [`calibration.json`](calibration.json) · **registration into the harness:** [`registration.patch`](registration.patch)
-- **Self-test on the 231 public items (harness run + parity + long-input smoke):** [`selftest.sh`](selftest.sh)
-- **Exact environment pins:** [`requirements-metask-rain.txt`](requirements-metask-rain.txt)
+Results checked on **2026-10-17** against [JevBench board v1.7.46](https://benchmarkheaven.com/jev-models) (page updated 2026-10-16). Scores are organizer-measured **Capability Scores**. Capability ranks are among **129 qualifying open-weight systems** under the official cost and latency limits; they are not composite-score ranks. The leaderboard's 'official #' label refers to its separate composite ranking.
 
-Author display: **MeTask-Rain** (same organisation as the existing `metask-jev-4b` row, Wayfind / metask-ai; a different system — no shared weights, prompt, calibration or code). Prior work: the read-out belongs to the NInfer → Cygnet family; see "Prior work" in `README-metask-rain.md`. All numbers in this repository are local estimates on the 231 public items; no Speed, Cost, composite or rank estimate is made.
+For these full-set results, the operator measures each system on 1,500 decisions: 1,200 sealed items that submitters cannot access and 300 public items.
 
-Licence: MIT for the code and calibration files in this repository ([`LICENSE`](LICENSE)); the base weights are Google's, Apache-2.0, used subject to the Gemma Prohibited Use Policy ([`NOTICE.md`](NOTICE.md)). This repository will be transferred to the `metask-ai` organisation; the commit SHA is the pin.
+| Model | Capability Score | Capability rank | Weights | Service |
+|---|---:|---|---|---|
+| MeTask 31B (service v3) | 79.6 | 3 | [Model card](https://huggingface.co/MeTask-Rain/metask-jev-rain-31B-trained) | [31B service](https://github.com/chenyuwang166-oss/metask-jev-rain-31B-trained) |
+| MeTask 12B | 77.9 | 6; highest among entries labeled 12B in the system name | [Model card](https://huggingface.co/MeTask-Rain/metask-jev-rain-12B-trained) | [12B service](https://github.com/chenyuwang166-oss/metask-jev-rain-12B-trained) |
+
+
+Published by MeTask under the public GitHub account `chenyuwang166-oss`. Project and contact entry point: [MeTask-Rain](https://huggingface.co/MeTask-Rain).
+
+## Historical package and disclosure
+
+The original model identity, training status, use of public items, local estimates, relationship to earlier entries and method attribution remain in the [original disclosure](DISCLOSURE.md). Local measurements for this package are not the official scores of the current trained models.
+
+- [Historical technical description and run instructions](README-metask-rain.md)
+- [Adapter](jevbench/adapters/metask_rain.py), [calibration](calibration.json) and [registration](registration.patch)
+- [Self-test instructions](selftest.sh) and [environment pins](requirements-metask-rain.txt)
+
+Code and calibration: [MIT](LICENSE). Base weights: Google Gemma 4 12B, Apache-2.0; the historical package's [NOTICE](NOTICE.md) and [disclosure](DISCLOSURE.md) retain the applicable attribution and use-policy statement.
